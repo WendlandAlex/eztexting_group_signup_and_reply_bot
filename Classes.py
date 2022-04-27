@@ -1,8 +1,6 @@
 import requests
 from logging import Logger
 
-from sympy import re
-
 class Client():
     def __init__(self, username, password, base_url):
         self.username = username
@@ -15,55 +13,101 @@ class Client():
         }
 
     def make_api_call(self, url, method, params_dict=None):
-        if method.lower() not in ['get', 'post']:
-            Logger.error(f'ERROR: invalid HTTP method provided {method}')
-            raise
+        try:
+            new_params_dict = self.base_params_dict.update(params_dict)
+            
+            response =  requests.request(
+                    verb=method,
+                    url=url,
+                    params=new_params_dict
+                )
 
-        new_params_dict = self.base_params_dict.update(params_dict)
-
-        response =  requests.request(
-                verb=method,
-                url=url,
-                params=new_params_dict
-            )
-
-        if not response.ok:
-            Logger.error(f'ERROR {response.status_code} CALLING {response.url}: {response.json()}')
+            if not response.ok:
+                Logger.error(f'ERROR {response.status_code} CALLING {response.url}: {response.json()}')
+            else:
+                return {
+                    'status_code': response.status_code,
+                    'data': response.json()
+                }
         
-        else:
-            return response.json().get('Response')
+        except Exception as e:
+            Logger.error(f'ERROR CALLING {url}: {e}')
 
-class Contact():
-    pass
+
+class Contact(Client):
+    def __init__(self, contact_id=None):
+        self.contact_id = contact_id
+        self.url=f'{self.base_url}/contacts'
+        if self._get_contact():
+            for field, value in self._get_contact.items():
+                setattr(self, field, value)
+
+    def _create_contact(self, new_params_dict):
+        return super().make_api_call(
+            url = self.url,
+            method = 'GET',
+            params_dict=new_params_dict
+        ).get('data').get('Response').get('Entry')
+
+    def _get_contact(self):
+        return super().make_api_call(
+            url = f'{self.url}/{self.contact_id}',
+            method = 'GET'
+        ).get('data').get('Response').get('Entry')
+
+    def _update_contact(self, new_params_dict):
+        """
+        The only intended use case for this method is to immediately precede deleting the class instance
+        So expect that any service calling this method will accept the return object and call 'del old_object'
+        """
+        response = super().make_api_call(
+            url = f'{self.url}/{self.contact_id}',
+            method = 'GET',
+            params_dict=new_params_dict
+        ).get('data').get('Response').get('Entry')
+
+        return Contact(response.get('ID'))
+
+    def _delete_contact(self):
+        response = super().make_api_call(
+            url = f'{self.url}/{self.contact_id}',
+            method = 'DELETE'
+        )
+
+        if response.get('status_code') == 204:
+            return True
+
 
 class CreditCard(Client):
     def __init__(self, last_four_digits):
         self.url=f'{self.base_url}/billing/credits'
-        self.last_four_digits = last_four_digits
-        credits_breakdown_dict = self._get_available_credits()
-        self.available_credits = credits_breakdown_dict.get('TotalCredits')
-        self.available_credits_plan = credits_breakdown_dict.get('PlanCredits')
-        self.available_credits_anytime = credits_breakdown_dict.get('AnytimeCredits')
+        if last_four_digits is not None: self.last_four_digits = last_four_digits
+        credits_data = self._get_available_credits()
+        self.TotalCredits = credits_data.get('TotalCredits')
+        self.PlanCredits = credits_data.get('PlanCredits')
+        self.AnytimeCredits = credits_data.get('AnytimeCredits')
         
     def _get_available_credits(self):
-        response = super(CreditCard).make_api_call(
+        return super().make_api_call(
             url = f'{self.url}/get',
-            method = 'GET',
-        )
-
-        return response.get('Entry')
+            method = 'GET'
+        ).get('data').get('Response').get('Entry')
 
 class Folder():
     pass
 
+
 class Group():
     pass
+
 
 class Inbox():
     pass
 
+
 class Keyword():
     pass
+
 
 class Message():
     pass
