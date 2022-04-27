@@ -2,8 +2,9 @@ import requests
 import os
 import json
 
-from Classes import Client, Contact, CreditCard, Folder, Group, Inbox, Keyword, Message
-from Services import send, receive, scheduled_send, generate_credit_report
+from Classes import Client, Contact, CreditCard, Folder, Group, Inbox, Keyword, MediaFile, Message
+from Services.contacts import get_all_contacts, get_filtered_contacts
+from Services.messages import send_message, receive_message, scheduled_send_message 
 
 eztexting_username              = os.getenv('USERNAME')
 eztexting_password              = os.getenv('PASSWORD')
@@ -16,6 +17,7 @@ eztexting_creditcard            = CreditCard(eztexting_client, eztexting_creditc
 eztexting_admin                 = Contact(eztexting_admin_contact)
 
 def main():
+    print(eztexting_admin.FirstName, eztexting_admin.LastName, eztexting_admin.CreatedAt)
     print(eztexting_creditcard.available_credits)
 
 if __name__ == '__main__':

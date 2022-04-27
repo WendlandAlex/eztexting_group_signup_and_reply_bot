@@ -1,3 +1,4 @@
+from ast import Sub
 import requests
 from logging import Logger
 
@@ -14,12 +15,12 @@ class Client():
 
     def make_api_call(self, url, method, params_dict=None):
         try:
-            new_params_dict = self.base_params_dict.update(params_dict)
+            query_params_dict = self.base_params_dict.update(params_dict)
             
             response =  requests.request(
                     verb=method,
                     url=url,
-                    params=new_params_dict
+                    params=query_params_dict
                 )
 
             if not response.ok:
@@ -38,8 +39,9 @@ class Contact(Client):
     def __init__(self, contact_id=None):
         self.contact_id = contact_id
         self.url=f'{self.base_url}/contacts'
-        if self._get_contact():
-            for field, value in self._get_contact.items():
+        data = self._get_contact()
+        if data is not None:
+            for field, value in data.items():
                 setattr(self, field, value)
 
     def _get_contact(self):
@@ -48,14 +50,14 @@ class Contact(Client):
             method = 'GET'
         ).get('data').get('Response').get('Entry')
 
-    def create_contact(self, new_params_dict):
+    def create_contact(self, query_params_dict):
         return super().make_api_call(
             url = self.url,
             method = 'GET',
-            params_dict=new_params_dict
+            params_dict=query_params_dict
         ).get('data').get('Response').get('Entry')
 
-    def update_contact(self, new_params_dict):
+    def update_contact(self, query_params_dict):
         """
         The only intended use case for this method is to immediately precede deleting the class instance
         So expect that any service calling this method will accept the return object and call 'del old_object'
@@ -63,7 +65,7 @@ class Contact(Client):
         response = super().make_api_call(
             url = f'{self.url}/{self.contact_id}',
             method = 'GET',
-            params_dict=new_params_dict
+            params_dict=query_params_dict
         ).get('data').get('Response').get('Entry')
 
         return Contact(response.get('ID'))
@@ -75,7 +77,7 @@ class Contact(Client):
         )
 
         if response.get('status_code') == 204:
-            return True
+            return self.contact_id
 
 
 class CreditCard(Client):
@@ -109,5 +111,33 @@ class Keyword():
     pass
 
 
-class Message():
+class MediaFile():
     pass
+
+
+class Message(Client):
+    def __init__(self, PhoneNumbers, Message, Groups=None, Subject=None, StampToSend=None, MessageTypeID=None, FileID=None):
+        self.url            =f'{self.base_url}/messages'
+        self.PhoneNumbers   = PhoneNumbers
+        self.Groups         = Groups
+        self.Subject        = Subject
+        self.Message        = Message
+        self.StampToSend    = StampToSend
+        self.MessageTypeID  = MessageTypeID
+        self.FileID         = FileID
+        
+    def _load_params(self):
+        # returns all of the parameters (other than url) as a dict for use in the requests 'params=' parameter
+        params_dict = self.__dict__
+        params_dict.pop('url')
+        return params_dict
+
+    def send_message(self):
+        response = super().make_api_call(
+            url = self.url,
+            method = 'GET',
+            params_dict = self._load_params()
+        )
+
+        if response.get('status_code') == 201:
+            return response.get('data').get('Reponse').get('Entry')
