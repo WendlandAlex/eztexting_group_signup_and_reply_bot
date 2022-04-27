@@ -42,20 +42,20 @@ class Contact(Client):
             for field, value in self._get_contact.items():
                 setattr(self, field, value)
 
-    def _create_contact(self, new_params_dict):
-        return super().make_api_call(
-            url = self.url,
-            method = 'GET',
-            params_dict=new_params_dict
-        ).get('data').get('Response').get('Entry')
-
     def _get_contact(self):
         return super().make_api_call(
             url = f'{self.url}/{self.contact_id}',
             method = 'GET'
         ).get('data').get('Response').get('Entry')
 
-    def _update_contact(self, new_params_dict):
+    def create_contact(self, new_params_dict):
+        return super().make_api_call(
+            url = self.url,
+            method = 'GET',
+            params_dict=new_params_dict
+        ).get('data').get('Response').get('Entry')
+
+    def update_contact(self, new_params_dict):
         """
         The only intended use case for this method is to immediately precede deleting the class instance
         So expect that any service calling this method will accept the return object and call 'del old_object'
@@ -68,7 +68,7 @@ class Contact(Client):
 
         return Contact(response.get('ID'))
 
-    def _delete_contact(self):
+    def delete_contact(self):
         response = super().make_api_call(
             url = f'{self.url}/{self.contact_id}',
             method = 'DELETE'
