@@ -4,7 +4,7 @@ import json
 
 from Classes import Client, Contact, CreditCard, Folder, Group, Inbox, Keyword, MediaFile, Message
 from Services.contacts import get_all_contacts, get_filtered_contacts
-from Services.messages import send_message, receive_message, scheduled_send_message 
+from Services.messages import send_message, receive_message, schedule_message 
 
 eztexting_username              = os.getenv('USERNAME')
 eztexting_password              = os.getenv('PASSWORD')
