@@ -90,10 +90,17 @@ class CreditCard(Client):
         self.AnytimeCredits = credits_data.get('AnytimeCredits')
         
     def _get_available_credits(self):
-        return super().make_api_call(
+        response = super().make_api_call(
             url = f'{self.url}/get',
             method = 'GET'
-        ).get('data').get('Response').get('Entry')
+        )
+        
+        try:
+            credits = response.get('data').get('Response').get('Entry')
+        except KeyError:
+            credits = None
+
+        return credits
 
 class Folder():
     pass
@@ -117,7 +124,7 @@ class MediaFile():
 
 class Message(Client):
     def __init__(self, PhoneNumbers, Message, Groups=None, Subject=None, StampToSend=None, MessageTypeID=None, FileID=None):
-        self.url            =f'{self.base_url}/messages'
+        self.url            = f'{self.base_url}/messages'
         self.PhoneNumbers   = PhoneNumbers
         self.Groups         = Groups
         self.Subject        = Subject
