@@ -40,15 +40,18 @@ class CreditCard(Client):
     def __init__(self, last_four_digits):
         self.url=f'{self.base_url}/billing/credits'
         self.last_four_digits = last_four_digits
-        self.available_credits, self.available_credits_plan, self.available_credits_anytime = self._get_available_credits()
+        credits_breakdown_dict = self._get_available_credits()
+        self.available_credits = credits_breakdown_dict.get('TotalCredits')
+        self.available_credits_plan = credits_breakdown_dict.get('PlanCredits')
+        self.available_credits_anytime = credits_breakdown_dict.get('AnytimeCredits')
         
     def _get_available_credits(self):
         response = super(CreditCard).make_api_call(
             url = f'{self.url}/get',
             method = 'GET',
-        ).get('Entry')
+        )
 
-        return response.get('TotalCredits'), response.get('PlanCredits'), response.get('AnytimeCredits')
+        return response.get('Entry')
 
 class Folder():
     pass
