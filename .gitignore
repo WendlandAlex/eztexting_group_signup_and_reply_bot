@@ -4,3 +4,4 @@
 .pyc
 .lib/*
 .env
+!.env.example
