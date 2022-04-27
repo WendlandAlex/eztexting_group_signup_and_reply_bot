@@ -3,6 +3,7 @@ import os
 import json
 
 from Classes import Contact, Credits, Folder, Group, Inbox, Keyword, Message
+from Services import send, receive
 
 eztexting_username      = os.getenv('USERNAME')
 eztexting_password      = os.getenv('PASSWORD')
