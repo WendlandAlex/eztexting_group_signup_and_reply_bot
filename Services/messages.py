@@ -5,7 +5,9 @@ import urllib
 from Classes import Client, Contact, Group, Message
 
 def _strftime_unix(timestamp: datetime.datetime):
-    timetuple = timestamp.timetuple()
+    # sanitize tzinfo and convert to epoch seconds in UTC
+    # strip the decimal
+    timetuple = timestamp.replace(tzinfo=datetime.timezone.utc).timetuple()
     return time.mktime(timetuple)
 
 def send_message(message_client: Client):
@@ -18,7 +20,7 @@ def receive_inbox_message_reply(message: Message, phone_number, message_body):
 def receive_pointer_to_inbox_message():
     pass
 
-def schedule_message(message_client: Client, datetime_object):
+def schedule_message(message_client: Client, datetime_object: datetime.datetime):
     sender = Message(message_client,
         StampToSend= _strftime_unix(datetime_object)
     )
