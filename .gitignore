@@ -2,6 +2,11 @@
 .idea
 .history/
 .pyc
+bin/*
+include/*
+lib/*
+lib64/*
+pyenv.cfg
 .lib/*
 .env
 !.env.example

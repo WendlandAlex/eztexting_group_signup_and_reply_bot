@@ -1,4 +1,3 @@
-from ast import Sub
 import requests
 from logging import Logger
 
@@ -134,15 +133,16 @@ class Message(Client):
         self.FileID         = FileID
         
     def _load_params(self):
-        # returns all of the parameters (other than url) as a dict for use in the requests 'params=' parameter
+        # transform instance attributes into a dict to pass to the requests method
+        # but remove url and treat url as its own parameter
         params_dict = self.__dict__
         params_dict.pop('url')
         return params_dict
 
-    def send_message(self):
+    def send(self):
         response = super().make_api_call(
             url = self.url,
-            method = 'GET',
+            method = 'GET', # did they really have to put a write operation behind a GET?
             params_dict = self._load_params()
         )
 
