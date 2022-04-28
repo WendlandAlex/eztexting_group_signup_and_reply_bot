@@ -49,14 +49,14 @@ class Contact(Client):
             method = 'GET'
         ).get('data').get('Response').get('Entry')
 
-    def create_contact(self, query_params_dict):
+    def create(self, query_params_dict):
         return super().make_api_call(
             url = self.url,
             method = 'GET',
             params_dict=query_params_dict
         ).get('data').get('Response').get('Entry')
 
-    def update_contact(self, query_params_dict):
+    def update(self, query_params_dict):
         """
         The only intended use case for this method is to immediately precede deleting the class instance
         So expect that any service calling this method will accept the return object and call 'del old_object'
@@ -69,7 +69,7 @@ class Contact(Client):
 
         return Contact(response.get('ID'))
 
-    def delete_contact(self):
+    def delete(self):
         response = super().make_api_call(
             url = f'{self.url}/{self.contact_id}',
             method = 'DELETE'
