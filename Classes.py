@@ -1,9 +1,10 @@
-from email import message
-from typing import List
+import base64
+import datetime
 import requests
 from logging import Logger
 
-from sympy import comp
+from Services.oauth import generate_oauth_token, refresh_oauth_token
+
 
 class Client():
     def __init__(self, username, password, companyName, base_url, payload={}, headers={}):
@@ -14,12 +15,9 @@ class Client():
         self.password = password
         self.companyName = companyName
         self.base_url = base_url
-        self.oauth_token = self.generate_oauth_token(self.username, self.password)
+        self._generate_or_refresh_oauth_token(self.username, self.password)
         self._update_payload(self, companyName)
-        self._update_headers(self, self.oauth_token)
-        
-    def generate_oauth_token(self, appKey, appSecret):
-        response = self.make_api_call('POST', f'{self.base_url}/tokens/create', headers_dict=self.headers, payload_dict={'appKey': appKey, 'appSecret': appSecret})
+        self._update_headers(self, self.accessToken)
 
     def _update_payload(self, **kwargs):
         self.payload.update(kwargs)
@@ -27,9 +25,34 @@ class Client():
     def _update_headers(self, **kwargs):
         self.headers.update(kwargs)
 
-    def make_api_call(self, method, url, headers_dict=None, payload_dict=None):
+    def _generate_or_refresh_oauth_token(self):
+        if all(hasattr(self, attribute) for attribute in ['accessToken', 'refreshToken', 'expiration_datetime']):
+            # refresh the token if it expires in the next 10 seconds
+            if self.expiration_datetime < datetime.datetime.now() + datetime.timedelta(seconds=10):
+                accessToken, refreshToken, expiration_datetime = refresh_oauth_token(self, self.refreshToken)
+
+                self.accessToken = accessToken
+                self.refreshToken = refreshToken
+                self.expiration_datetime = expiration_datetime
+
+        else:
+            accessToken, refreshToken, expiration_datetime = generate_oauth_token(self.username, self.password)
+
+            self.accessToken = accessToken
+            self.refreshToken = refreshToken
+            self.expiration_datetime = expiration_datetime
+
+    def make_api_call(self, method, url, headers_dict=None, payload_dict=None, auth_method='oauth'):
+        if auth_method == 'oauth':
+            auth_header = {f'Authorization: Bearer {self.accessToken}'}
+
+        elif auth_method == 'http_basic':
+            auth_string = ':'.join([self.username, self.password])
+            b64_encoded_auth_string = base64.b64encode(auth_string.encode())
+            auth_header = {f'Authorization: Basic {b64_encoded_auth_string}'}
+
         try:
-            final_headers = self.headers.update(headers_dict)
+            final_headers = self.headers.update(headers_dict).update(auth_header)
             final_payload = self.payload.update(payload_dict)
 
             response =  requests.request(
