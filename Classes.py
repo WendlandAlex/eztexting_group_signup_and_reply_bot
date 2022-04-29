@@ -1,25 +1,46 @@
+from email import message
 import requests
 from logging import Logger
 
+from sympy import comp
+
 class Client():
-    def __init__(self, username, password, base_url):
+    def __init__(self, username, password, companyName, base_url, payload={}, headers={}):
+        self.payload = payload
+        self.headers = headers
         self.username = username
         self.password = password
+        self.companyName = companyName
         self.base_url = base_url
-        self.base_params_dict = {
-            "User": self.username,
-            "Password": self.password,
-            "format": "json"
-        }
+        self.oauth_token = self.generate_oauth_token(self.username, self.password)
+        self._update_payload(self, companyName)
+        self._update_headers(self, self.oauth_token)
+        
+    def generate_oauth_token(username, password):
+        # TODO:
+        return "auth"
 
-    def make_api_call(self, url, method, params_dict=None):
+    def _update_payload(self, **kwargs):
+        self.payload.update(kwargs)
+
+    def _update_headers(self, **kwargs):
+        self.headers.update({
+                "Accept": "*/*",
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.oauth_token}"
+                })
+        self.headers.update(kwargs)
+
+    def make_api_call(self, method, url, headers_dict=None, payload_dict=None):
         try:
-            query_params_dict = self.base_params_dict.update(params_dict)
-            
+            final_headers = self.headers.update(headers_dict)
+            final_payload = self.payload.update(payload_dict)
+
             response =  requests.request(
                     verb=method,
                     url=url,
-                    params=query_params_dict
+                    headers=final_headers,
+                    payload=final_payload
                 )
 
             if not response.ok:
@@ -122,16 +143,18 @@ class MediaFile():
 
 
 class Message(Client):
-    def __init__(self, PhoneNumbers, Message, Groups=None, Subject=None, StampToSend=None, MessageTypeID=None, FileID=None):
-        self.url            = f'{self.base_url}/messages'
-        self.PhoneNumbers   = PhoneNumbers
-        self.Groups         = Groups
-        self.Subject        = Subject
-        self.Message        = Message
-        self.StampToSend    = StampToSend
-        self.MessageTypeID  = MessageTypeID
-        self.FileID         = FileID
-        
+    def __init__(self, companyName=None, fromNumber=None, groupIds=[]):
+        self.url                = f'{self.base_url}/messages'
+        self.companyName        = companyName
+        self.fromNumber         = fromNumber
+        self.groupIds           = groupIds
+        self.mediaFielId        = mediaFileId
+        self.mediaurl           = mediaUrl
+        self.Message            = message
+        self.messageTemplateId  = messageTemplateId
+        self.strictValidation   = strictValidation
+        self.toNumbers          = toNumbers
+
     def _load_params(self):
         # transform instance attributes into a dict to pass to the requests method
         # but remove url and treat url as its own parameter

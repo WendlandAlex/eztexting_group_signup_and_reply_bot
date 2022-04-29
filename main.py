@@ -12,11 +12,12 @@ from Handlers.admin_commands import *
 
 eztexting_username              = os.getenv('USERNAME')
 eztexting_password              = os.getenv('PASSWORD')
+eztexting_companyName           = os.getenv('COMPANY_NAME', 'say it with your chest dtx')
 eztexting_creditcard_number     = os.getenv('EZTEXTING_CREDITCARD', None)
 eztexting_admin_contact         = os.getenv('EZTEXTING_ADMIN_CONTACT', None)
-base_url                        = os.getenv('BASE_URL', 'https://app.eztexting.com')
+base_url                        = os.getenv('BASE_URL', 'https://a.eztexting.com/v1')
 
-eztexting_client                = Client(eztexting_username, eztexting_password, base_url)
+eztexting_client                = Client(eztexting_username, eztexting_password, eztexting_companyName, base_url)
 eztexting_creditcard            = CreditCard(eztexting_client, eztexting_creditcard_number)
 eztexting_admin                 = Contact(eztexting_admin_contact)
 
