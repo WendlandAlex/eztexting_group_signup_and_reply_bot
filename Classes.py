@@ -9,6 +9,7 @@ class Client():
     def __init__(self, username, password, companyName, base_url, payload={}, headers={}):
         self.payload = payload
         self.headers = headers
+        self.headers.update({"Accept": "*/*", "Content-Type": "application/json"})
         self.username = username
         self.password = password
         self.companyName = companyName
@@ -17,19 +18,13 @@ class Client():
         self._update_payload(self, companyName)
         self._update_headers(self, self.oauth_token)
         
-    def generate_oauth_token(username, password):
-        # TODO:
-        return "auth"
+    def generate_oauth_token(self, appKey, appSecret):
+        response = self.make_api_call('POST', f'{self.base_url}/tokens/create', headers_dict=self.headers, payload_dict={'appKey': appKey, 'appSecret': appSecret})
 
     def _update_payload(self, **kwargs):
         self.payload.update(kwargs)
 
     def _update_headers(self, **kwargs):
-        self.headers.update({
-                "Accept": "*/*",
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {self.oauth_token}"
-                })
         self.headers.update(kwargs)
 
     def make_api_call(self, method, url, headers_dict=None, payload_dict=None):
