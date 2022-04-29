@@ -1,4 +1,5 @@
 from email import message
+from typing import List
 import requests
 from logging import Logger
 
@@ -143,31 +144,41 @@ class MediaFile():
 
 
 class Message(Client):
-    def __init__(self, companyName=None, fromNumber=None, groupIds=[]):
-        self.url                = f'{self.base_url}/messages'
-        self.companyName        = companyName
+    def __init__(self, fromNumber: str=None, groupIds: list=None, mediaFileId: str=None, mediaUrl: str=None, message: str=None, messageTemplateId: str=None, sendAt: str=None, strictValidation: bool=False, toNumbers: list=None, headers: dict=None):
+        """
+        strictValidation = if one number in the list is invalid, no messages will be sent (including to valid numbers)
+        """
+        # params from eztexting documentation
+        self.companyName        = self.companyName
         self.fromNumber         = fromNumber
         self.groupIds           = groupIds
-        self.mediaFielId        = mediaFileId
-        self.mediaurl           = mediaUrl
-        self.Message            = message
+        self.mediaFileId        = mediaFileId
+        self.mediaUrl           = mediaUrl
+        self.message            = message
         self.messageTemplateId  = messageTemplateId
+        self.sendAt             = sendAt
         self.strictValidation   = strictValidation
         self.toNumbers          = toNumbers
 
-    def _load_params(self):
+        # params we need to make the API call
+        self.url                = f'{self.base_url}/messages'
+        self.headers            = headers
+
+
+    def _load_payload(self):
         # transform instance attributes into a dict to pass to the requests method
         # but remove url and treat url as its own parameter
-        params_dict = self.__dict__
-        params_dict.pop('url')
-        return params_dict
+        payload_dict = self.__dict__
+        payload_dict.pop('url')
+        return payload_dict
 
     def send(self):
         response = super().make_api_call(
             url = self.url,
-            method = 'GET', # did they really have to put a write operation behind a GET?
-            params_dict = self._load_params()
+            method = 'POST',
+            headers_dict = self.headers,
+            payload_dict = self._load_payload()
         )
 
-        if response.get('status_code') == 201:
-            return response.get('data').get('Reponse').get('Entry')
+        if response.get('status_code') in [200, 201]:
+            return response.get('data').get('id')
