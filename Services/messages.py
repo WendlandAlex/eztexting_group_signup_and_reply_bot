@@ -2,7 +2,7 @@ import time
 import datetime
 import urllib
 
-from EztextingAPIClasses import Client, Contact, Group, Message
+from Classes import Client, Contact, Group, Message
 
 def _strftime_unix(timestamp: datetime.datetime):
     timetuple = timestamp.timetuple()

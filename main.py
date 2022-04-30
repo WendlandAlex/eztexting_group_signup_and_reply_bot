@@ -3,7 +3,7 @@ import dotenv
 import os
 import json
 
-from EztextingAPIClasses import Client, Contact, CreditCard, Folder, Group, Inbox, Keyword, MediaFile, Message
+from Classes import Client, Contact, CreditCard, Folder, Group, Inbox, Keyword, MediaFile, Message
 from Services.contacts import get_all_contacts, get_filtered_contacts
 from Services.messages import send_message, receive_inbox_message_reply, receive_pointer_to_inbox_message, schedule_message 
 from Handlers.inbox_message_replies import *

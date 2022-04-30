@@ -1,7 +1,7 @@
 import requests
 import json
 
-from EztextingAPIClasses import Client, Contact
+from Classes import Client, Contact
 
 def get_all_contacts(client: Client, sorting=None, pagination=None):
     """
@@ -53,7 +53,7 @@ def get_filtered_contacts(client: Client, filters_dict: dict=None, sort_by: str=
             pass
         elif k in ['optOut', 'source']:
             query_params_dict.update({k: v})
-            
+
     response = client.make_api_call(
         url=f'{client.base_url}/contacts',
         method='GET',
