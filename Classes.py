@@ -153,34 +153,6 @@ class Contact(Client):
             return self.contact_id
 
 
-class CreditCard(Client):
-    def __init__(self, last_four_digits: str=None):
-        super().__init__()
-        self.url=f'{self.base_url}/billing/credits'
-        if last_four_digits is not None:
-            if len(last_four_digits) > 4: last_four_digits = last_four_digits[-4:]
-            self.last_four_digits = last_four_digits
-        credits_data = self._get_available_credits()
-        self.TotalCredits = credits_data.get('TotalCredits')
-        self.PlanCredits = credits_data.get('PlanCredits')
-        self.AnytimeCredits = credits_data.get('AnytimeCredits')
-        
-    def _get_available_credits(self):
-        response = self.make_api_call(
-            url = f'{self.url}/get',
-            method = 'GET',
-            
-        )
-
-        print(response.raw)
-        
-        try:
-            credits = response.get('data').get('Response').get('Entry')
-        except KeyError:
-            credits = None
-
-        return credits
-
 class Folder():
     def __init__(self):
         pass
