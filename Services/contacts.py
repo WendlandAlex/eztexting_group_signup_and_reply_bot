@@ -1,7 +1,8 @@
 import requests
 import json
 
-from Classes import Client, Contact
+from Classes.Superclass import Client
+from Classes.Subclass import Contact
 
 def get_all_contacts(client: Client, sorting=None, pagination=None):
     """

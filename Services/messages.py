@@ -2,7 +2,8 @@ import time
 import datetime
 import urllib
 
-from Classes import Client, Contact, Group, Message
+from Classes.Superclass import Client
+from Classes.Subclass import Contact, Group, Message
 
 def _strftime_unix(timestamp: datetime.datetime):
     # sanitize tzinfo and convert to epoch seconds in UTC
