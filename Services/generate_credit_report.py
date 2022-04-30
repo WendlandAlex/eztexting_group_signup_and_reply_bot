@@ -1,4 +1,4 @@
 import requests
 import json
 
-from Classes import CreditCard, Contact, Message
+from EztextingAPIClasses import CreditCard, Contact, Message
