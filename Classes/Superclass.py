@@ -6,7 +6,7 @@ logging.basicConfig(level=logging.DEBUG)
 classes_logger = logging.getLogger(__name__)
 classes_logger.setLevel(logging.DEBUG)
 
-from Services.oauth import generate_oauth_token, refresh_oauth_token
+from Services.oauth import generate_oauth_token_pair, refresh_oauth_token_pair, revoke_oauth_access_token, revoke_oauth_refresh_token
 
 
 class Client():
@@ -17,7 +17,7 @@ class Client():
         self.password = password
         self.companyName = companyName
         self.base_url = base_url
-        self._generate_or_refresh_oauth_token()
+        self._generate_or_refresh_oauth_token_pair()
         self._update_payload(**{"companyName": self.companyName})
         self._update_headers(**{"Accept": "*/*", "Content-Type": "application/json"})
 
@@ -44,18 +44,18 @@ class Client():
 
         return self
 
-    def _generate_or_refresh_oauth_token(self):
+    def _generate_or_refresh_oauth_token_pair(self):
         if all(hasattr(self, attribute) for attribute in ['accessToken', 'refreshToken', 'expiration_datetime']):
             # refresh the token if it expires in the next 10 seconds
             if self.expiration_datetime < datetime.datetime.now() + datetime.timedelta(seconds=10):
-                accessToken, refreshToken, expiration_datetime = refresh_oauth_token(self, self.refreshToken)
+                accessToken, refreshToken, expiration_datetime = refresh_oauth_token_pair(self, self.refreshToken)
 
                 self.accessToken = accessToken
                 self.refreshToken = refreshToken
                 self.expiration_datetime = expiration_datetime
 
         else:
-            accessToken, refreshToken, expiration_datetime = generate_oauth_token(self, self.username, self.password)
+            accessToken, refreshToken, expiration_datetime = generate_oauth_token_pair(self)
 
             self.accessToken = accessToken
             self.refreshToken = refreshToken
@@ -75,6 +75,8 @@ class Client():
             auth_string = ':'.join([self.username, self.password])
             b64_encoded_auth_string = base64.b64encode(auth_string.encode())
             auth_header = {'Authorization': f'Basic {b64_encoded_auth_string.decode()}'}
+
+        else: auth_header = {}
 
         try:
             for i in [self.headers, headers_dict, auth_header]:

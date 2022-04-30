@@ -188,5 +188,5 @@ class Message(Client):
             payload_dict = self._load_payload()
         )
 
-        if response.get('status_code') in [200, 201]:
-            return response.get('data').get('id')
+        if response.status_code in [200, 201]:
+            return response

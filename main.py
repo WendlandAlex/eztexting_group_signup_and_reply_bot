@@ -1,7 +1,5 @@
-import requests
 import dotenv
 import os
-import json
 
 from Classes.Superclass import Client
 from Classes.Subclass import Contact, Folder, Group, Inbox, Keyword, MediaFile, Message
