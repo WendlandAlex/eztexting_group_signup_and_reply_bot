@@ -1,7 +1,7 @@
 import sys
 
 required_keys = ['USERNAME', 'PASSWORD']
-optional_keys = ['EZTEXTING_CREDITCARD', 'EZTEXTING_ADMIN_CONTACT', 'BASE_URL']
+optional_keys = ['COMPANY_NAME', 'EZTEXTING_CREDITCARD', 'EZTEXTING_ADMIN_CONTACT', 'BASE_URL']
 list_of_envs = []
 
 try:
