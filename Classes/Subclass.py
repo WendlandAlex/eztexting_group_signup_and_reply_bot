@@ -1,14 +1,22 @@
 from Classes.Superclass import Client
 
 class Contact(Client):
-    def __init__(self, superclass, contact_id: str=None):
+    def __init__(self, superclass, phoneNumber: str=None, email: str=None, firstName: str=None, lastName: str=None, groupIdsAdd: list=None, groupIdsRemove: list=None, note: str=None, ):
+        self.url=f'{self.base_url}/contacts'
         self._super = superclass
         self._super_attrs = self._super._attrs_for_subclass
-        self.contact_id = contact_id
-        self.url=f'{self.base_url}/contacts'
-        data = self._get_contact()
+        
+        self.phoneNumber        = phoneNumber
+        self.email              = email
+        self.firstName          = firstName
+        self.lastName           = lastName
+        self.groupIdsAdd        = groupIdsAdd
+        self.groupIdsRemove     = groupIdsRemove
+        self.note               = note
+
+        data = self.get()
         if data is not None:
-            for field, value in data.items():
+            for field, value in data.json().items():
                 setattr(self, field, value)
 
     def __getattr__(self, attr, attr_if_attr_not_in_super=None):
@@ -21,40 +29,12 @@ class Contact(Client):
         # non-override version (for non-parent attributes)
         else: return self.__dict__.get(attr)
 
-    def _get_contact(self):
-        return super().make_api_call(
-            url = f'{self.url}/{self.contact_id}',
-            method = 'GET'
-        ).get('data').get('Response').get('Entry')
-
-    def create(self, query_params_dict):
-        return super().make_api_call(
+    def get(self):
+        return self.make_api_call(
             url = self.url,
             method = 'GET',
-            params_dict=query_params_dict
-        ).get('data').get('Response').get('Entry')
-
-    def update(self, query_params_dict):
-        """
-        The only intended use case for this method is to immediately precede deleting the class instance
-        So expect that any service calling this method will accept the return object and call 'del old_object'
-        """
-        response = super().make_api_call(
-            url = f'{self.url}/{self.contact_id}',
-            method = 'GET',
-            params_dict=query_params_dict
-        ).get('data').get('Response').get('Entry')
-
-        return Contact(response.get('ID'))
-
-    def delete(self):
-        response = super().make_api_call(
-            url = f'{self.url}/{self.contact_id}',
-            method = 'DELETE'
+            payload_dict={'phoneNumber': self.phoneNumber}
         )
-
-        if response.get('status_code') == 204:
-            return self.contact_id
 
 
 class Folder(Client):
@@ -88,6 +68,7 @@ class Group(Client):
         # non-override version (for non-parent attributes)
         else: return self.__dict__.get(attr)
 
+
 class Inbox(Client):
     def __init__(self, superclass):
         self._super = superclass
@@ -102,6 +83,7 @@ class Inbox(Client):
 
         # non-override version (for non-parent attributes)
         else: return self.__dict__.get(attr)
+
 
 class Keyword(Client):
     def __init__(self, superclass):
@@ -118,6 +100,7 @@ class Keyword(Client):
         # non-override version (for non-parent attributes)
         else: return self.__dict__.get(attr)
 
+
 class MediaFile(Client):
     def __init__(self, superclass):
         self._super = superclass
@@ -132,6 +115,7 @@ class MediaFile(Client):
 
         # non-override version (for non-parent attributes)
         else: return self.__dict__.get(attr)
+
 
 class Message(Client):
     def __init__(self, superclass, fromNumber: str=None, groupIds: list=None, mediaFileId: str=None, mediaUrl: str=None, message: str=None, messageTemplateId: str=None, sendAt: str=None, strictValidation: bool=False, toNumbers: list=None, headers: dict=None):

@@ -1,10 +1,11 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-import datetime
-from logging import Logger
 
 if TYPE_CHECKING:
     from Classes.Superclass import Client
+
+import datetime
+from logging import Logger
 
 def generate_oauth_token_pair(token_client: "Client"):
     response = token_client.make_api_call(

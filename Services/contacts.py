@@ -1,10 +1,14 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from Classes.Superclass import Client
+    from Classes.Subclass import Contact
+
 import requests
 import json
 
-from Classes.Superclass import Client
-from Classes.Subclass import Contact
-
-def get_all_contacts(client: Client, sorting=None, pagination=None):
+def get_all_contacts(client: "Client", sorting=None, pagination=None):
     """
     available sorting {
         "sortBy": "PhoneNumber"|"FirstName"|"LastName"|"CreatedAt"|"UpdatedAt",
@@ -29,7 +33,7 @@ def get_all_contacts(client: Client, sorting=None, pagination=None):
 
     return [Contact(contact.get('ID')) for contact in response]
 
-def get_filtered_contacts(client: Client, filters_dict: dict=None, sort_by: str=None, sort_direction: str=None, paging_page_size: int=None, paging_page: int=None):
+def get_filtered_contacts(client: "Client", filters_dict: dict=None, sort_by: str=None, sort_direction: str=None, paging_page_size: int=None, paging_page: int=None):
     """available filters {
         "filters[email][like]": "email",
         "filters[firstName][like]": "firstName",
@@ -62,4 +66,7 @@ def get_filtered_contacts(client: Client, filters_dict: dict=None, sort_by: str=
     )
 
     return [Contact(contact.get('ID')) for contact in response]
+
+def create_or_update_batch_of_contacts(client: "Client", contacts: list=None):
+    pass
     

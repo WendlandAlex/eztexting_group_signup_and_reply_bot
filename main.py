@@ -1,13 +1,16 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 import dotenv
 import os
 
-from Classes.Superclass import Client
-from Classes.Subclass import Contact, Folder, Group, Inbox, Keyword, MediaFile, Message
-from Services.contacts import get_all_contacts, get_filtered_contacts
-from Services.messages import send_message, receive_inbox_message_reply, receive_pointer_to_inbox_message, schedule_message 
-from Handlers.inbox_message_replies import *
-from Handlers.keyword_replies import *
-from Handlers.admin_commands import *
+if TYPE_CHECKING:
+    from Classes.Superclass import Client
+    from Classes.Subclass import Contact, Folder, Group, Inbox, Keyword, MediaFile, Message
+    from Services.contacts import get_all_contacts, get_filtered_contacts
+    from Services.messages import send_message, receive_inbox_message_reply, receive_pointer_to_inbox_message, schedule_message 
+    from Handlers.inbox_message_replies import *
+    from Handlers.keyword_replies import *
+    from Handlers.admin_commands import *
 
 dotenv.load_dotenv()
 
@@ -23,8 +26,8 @@ eztexting_client                = Client(eztexting_username, eztexting_password,
 # eztexting_admin                 = Contact(eztexting_admin_contact)
 
 def main():
-    print(
-        Message(eztexting_client, fromNumber=inbound_phone_number).send()
-    )
+    response = Message(eztexting_client, fromNumber=inbound_phone_number).send()
+    print(response)
+
 if __name__ == '__main__':
     exit(main())
