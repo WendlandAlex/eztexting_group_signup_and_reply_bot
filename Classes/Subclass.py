@@ -163,7 +163,7 @@ class Message(Client):
         # there are some attributes (e.g., accessToken that can refresh) that may need to change between sending multiple messages in a session
         # explanation here: https://stackoverflow.com/questions/1081253/inheriting-from-instance-in-python/1081925#1081925
         self._super = superclass
-        self._super_attrs = self._attrs_for_subclass # fragile alert: you won't know in the IDE if this variable name changes
+        self._super_attrs = self._attrs_for_subclass
         # see definition of __getattr__ below
         # when the __init__ method runs during construction,
         # __getattr__ when called by self.{attr} will try to get it from the parent class, if it is defined in _super_attrs 
