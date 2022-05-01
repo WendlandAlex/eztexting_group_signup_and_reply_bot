@@ -9,8 +9,8 @@ if TYPE_CHECKING:
     from Classes.Subclass import Contact, Folder, Group, Inbox, Keyword, MediaFile, Message
     from Services.contacts import get_all_contacts, get_filtered_contacts, create_or_update_batch_of_contacts
     from Services.messages import send_message, receive_inbox_message_reply, receive_pointer_to_inbox_message, schedule_message 
-    from Handlers.inbox_message_replies import *
-    from Handlers.keyword_replies import *
+    from Handlers.inbound_text_received import *
+    from Handlers.keyword_opt_in import *
     from Handlers.admin_commands import *
 
 dotenv.load_dotenv()

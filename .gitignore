@@ -2,6 +2,11 @@
 .idea
 .history/
 !.env.example
+pyenv.cfg
+lib64/
+lib/
+bin/
+
 
 # [include https://github.com/github/gitignore/blob/main/Python.gitignore]
 # Byte-compiled / optimized / DLL files

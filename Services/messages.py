@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 import datetime
 import time
 import datetime
-import urllib
+import requests
 
 
 def _strftime_unix(timestamp: datetime.datetime):
