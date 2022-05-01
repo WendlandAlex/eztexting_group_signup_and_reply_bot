@@ -182,10 +182,6 @@ class Message(Client):
 
         # params we need to make the API call
         self.url                = f'{self.base_url}/messages'
-        self.headers            = self.headers
-        self.payload            = self.payload
-        self.accessToken        = self.accessToken
-        self.refreshToken       = self.refreshToken
 
     def __getattr__(self, attr, attr_if_attr_not_in_super=None):
         if attr in self._super_attrs:
