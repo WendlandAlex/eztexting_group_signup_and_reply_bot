@@ -1,4 +1,5 @@
 from Classes.Superclass import Client
+import os
 
 class Contact(Client):
     _payload_attrs = ['phoneNumber', 'email', 'firstName', 'lastName', 'groupIdsAdd', 'groupIdsRemove', 'note', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5']
@@ -23,7 +24,6 @@ class Contact(Client):
 
         if self.phoneNumber is not None:
             try:
-                self.url = self.url + f'/{self.phoneNumber}'
                 data = self.get()
                 if data is not None:
                     for field, value in data.json().items():
@@ -33,7 +33,8 @@ class Contact(Client):
             except:
                 pass
 
-        # print(self.__dict__)
+        if os.getenv('DEBUG', False):
+            print(self.__dict__)
 
     def __getattr__(self, attr, attr_if_attr_not_in_super=None):
         if attr in self._super_attrs:
@@ -47,16 +48,15 @@ class Contact(Client):
 
     def get(self):
         return self.make_api_call(
-            url = self.url,
+            url = self.url + f'/{self.phoneNumber}',
             method = 'GET',
             payload_dict={'phoneNumber': self.phoneNumber}
         )
 
     def delete(self):
         return self.make_api_call(
-            url = self.url,
-            method = 'DELETE',
-            params_dict={'phoneNumber': self.phoneNumber}
+            url = self.url + f'/{self.phoneNumber}',
+            method = 'DELETE'
         )
 
     def create_or_update(self):

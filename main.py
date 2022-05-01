@@ -26,15 +26,15 @@ base_url                        = os.getenv('BASE_URL', 'https://a.eztexting.com
 eztexting_client                = Client(eztexting_username, eztexting_password, eztexting_companyName, base_url)
 
 def main():
-    print(
-        Message(eztexting_client, fromNumber=inbound_phone_number).send()
-    )
+    # print(
+    #     Message(eztexting_client, fromNumber=inbound_phone_number).send()
+    # )
     # print(
     #     eztexting_client
     # )
-    # print(
-    #     Contact(eztexting_client, phoneNumber=eztexting_admin_phone_number, custom1="my super cool custom1").create_or_update()
-    # )
+    print(
+        Contact(eztexting_client, phoneNumber=eztexting_admin_phone_number, custom1="my super cool custom1").create_or_update()
+    )
 
 if __name__ == '__main__':
     exit(main())
