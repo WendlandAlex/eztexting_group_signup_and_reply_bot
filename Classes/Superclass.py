@@ -1,6 +1,7 @@
 import base64
 import datetime
 import requests
+import pprint
 import logging
 logging.basicConfig(level=logging.DEBUG)
 classes_logger = logging.getLogger(__name__)
@@ -10,6 +11,10 @@ from Services.oauth import generate_oauth_token_pair, refresh_oauth_token_pair, 
 
 
 class Client():
+    # identify the core set of attributes needed for all API calls
+    # subclasses of API class can inherit these by overriding __getattr__ to call the superclass's attributes
+    _attrs_for_subclass = ['companyName', 'base_url', 'headers', 'payload', 'accessToken', 'refreshToken']
+
     def __init__(self, username=None, password=None, companyName=None, base_url=None, payload={}, headers={}):
         self.payload = payload
         self.headers = headers
@@ -21,12 +26,8 @@ class Client():
         self._update_payload(**{"companyName": self.companyName})
         self._update_headers(**{"Accept": "*/*", "Content-Type": "application/json"})
 
-        # identify the core set of attributes needed for all API calls
-        # subclasses of API class can inherit these by overriding __getattr__ to call the superclass's attributes
-        self._attrs_for_subclass = ['companyName', 'base_url', 'headers', 'payload', 'accessToken', 'refreshToken']
-
     def __str__(self):
-        return self.__dict__
+        return pprint.pformat(self.__dict__)
 
     def _update_payload(self, **kwargs):
         if self.payload is None:
@@ -64,9 +65,9 @@ class Client():
         return self
 
     def make_api_call(self, method, url, headers_dict: dict=None, payload_dict: dict=None, params_dict: dict=None, auth_method='oauth'):
-        final_headers = {}
-        final_payload = {}
-        final_params  = {}
+        final_headers = self.headers.copy()
+        final_payload = self.payload.copy()
+        final_params  = {}.copy()
 
         if auth_method == 'oauth':
             auth_header = {'Authorization': f'Bearer {self.accessToken}'}
@@ -79,22 +80,36 @@ class Client():
         else: auth_header = {}
 
         try:
-            for i in [self.headers, headers_dict, auth_header]:
-                final_headers.update(i)
+            for headers_dict_iterator in [self.headers, headers_dict, auth_header]:
+                if headers_dict_iterator is not None:
+                    final_headers.update(headers_dict_iterator)
 
-            for i in [self.payload, payload_dict]:
-                final_payload.update(i)
+            for payload_dict_iterator in [self.payload, payload_dict]:
+                if payload_dict_iterator is not None:
+                    final_payload.update(payload_dict_iterator)
 
             if params_dict is not None:
                 final_params.update(params_dict) # reserved for future modifications if we need them
 
-            response =  requests.request(
+            session = requests.Session()
+            final_request =  requests.Request(
                     method=method,
                     url=url,
                     headers=final_headers,
                     json=final_payload,
                     params=final_params
-                )
+                ).prepare()
+
+            classes_logger.debug({
+                    "_sent_by_class": type(self).__qualname__,
+                    "_called_with_args": locals(),
+                    "url": final_request.url,
+                    "method": final_request.method,
+                    "payload": final_request.body,
+                    "headers": final_request.headers
+                    })
+
+            response = session.send(final_request)
 
             if not response.ok:
                 classes_logger.error(f'status code {response.status_code} from {method} {response.url}: {response.json()}')
@@ -104,3 +119,4 @@ class Client():
 
         except Exception as e:
             classes_logger.error(f'ERROR CALLING {url}: {e}')
+            raise

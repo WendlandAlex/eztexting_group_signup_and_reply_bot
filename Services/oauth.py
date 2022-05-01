@@ -5,6 +5,7 @@ if TYPE_CHECKING:
     from Classes.Superclass import Client
 
 import datetime
+import os
 from logging import Logger
 
 def generate_oauth_token_pair(token_client: "Client"):
@@ -16,7 +17,8 @@ def generate_oauth_token_pair(token_client: "Client"):
         auth_method=None
         ).json()
 
-    # response = {'accessToken': 'mytoken', 'refreshToken': 'mytoken', 'expiresInSeconds': '5400'}
+    if os.getenv('DEBUG', False):
+        response = {'accessToken': 'mytoken', 'refreshToken': 'mytoken', 'expiresInSeconds': '5400'}
 
     accessToken = response.get('accessToken')
     refreshToken = response.get('refreshToken')

@@ -68,5 +68,6 @@ def get_filtered_contacts(client: "Client", filters_dict: dict=None, sort_by: st
     return [Contact(contact.get('ID')) for contact in response]
 
 def create_or_update_batch_of_contacts(client: "Client", contacts: list=None):
-    pass
+    for i in contacts:
+        return i.__dict__
     
