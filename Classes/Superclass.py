@@ -17,10 +17,10 @@ class Client():
     # subclasses of API class can inherit these by overriding __getattr__ to call the superclass's attributes
     _attrs_for_subclass = ['companyName', 'base_url', 'headers', 'payload', 'accessToken', 'refreshToken']
 
-    def __init__(self, username=None, password=None, companyName=None, base_url=None, payload={}, headers={}, params=[]):
+    def __init__(self, username=None, password=None, companyName=None, base_url=None, payload={}, headers={}, params=None):
         self.payload = payload
         self.headers = headers
-        self.params = params
+        self.params = [(None, None)].append(params)
         self.username = username
         self.password = password
         self.companyName = companyName
@@ -70,7 +70,7 @@ class Client():
     def make_api_call(self, method, url, headers_dict: dict=None, payload_dict: dict=None, params_list_of_tuples: list=None, auth_method='oauth'):
         final_headers = self.headers.copy()
         final_payload = self.payload.copy()
-        final_params  = self.params.copy()
+        final_params  = self.params
 
         if auth_method == 'oauth':
             auth_header = {'Authorization': f'Bearer {self.accessToken}'}

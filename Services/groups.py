@@ -15,10 +15,10 @@ debug_mapping = {
 def get_groupIds_from_names(client, groupNames):
     results = []
     for i in groupNames:
-        group = Group(client, groupName=i)
+        group = Group(client, name=i)
         if os.getenv('DEBUG', False):
-            group.groupId = debug_mapping.get(f'{group.groupName}')
+            group.id = debug_mapping.get(f'{group.name}')
 
-        results.append(group.groupId)
+        results.append(group.id)
 
     return results
