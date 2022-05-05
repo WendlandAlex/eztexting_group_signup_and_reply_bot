@@ -1,8 +1,9 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
+# from __future__ import annotations
+# from typing import TYPE_CHECKING
+# TYPE_CHECKING = True
 
-if TYPE_CHECKING:
-    from Classes.Superclass import Client
+# if TYPE_CHECKING:
+#     from Classes.Superclass import Client
 
 import datetime
 import os

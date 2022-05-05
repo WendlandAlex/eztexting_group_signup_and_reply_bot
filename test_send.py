@@ -1,16 +1,20 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+TYPE_CHECKING = True
+
+if TYPE_CHECKING:
+    from Handlers.validators import create_hmacSHA1_hash
+
 import os
 import dotenv
 import requests
 import time
-from hmacSHA1 import generate_hash_bytes
-import hashlib
-import hmac
 import base64
 import random
 
-dotenv.load_dotenv()
 
-url_data = os.getenv('NGROK')
+dotenv.load_dotenv()
+url_data = os.getenv('WEBHOOK_URL')
 signing_key = os.getenv('WEBHOOK_SECRET_KEY')
 
 days_list = [
@@ -43,7 +47,7 @@ def generate_body(inputs_list):
 
 def generate_header_sig(body):
     return {
-        "X-Signature": base64.b64encode(generate_hash_bytes(body, signing_key=signing_key).digest()).decode()
+        "X-Signature": base64.b64encode(create_hmacSHA1_hash(body, signing_key=signing_key).digest()).decode()
         }
 
 def main(url, data):
@@ -59,3 +63,4 @@ def main(url, data):
 if __name__ == '__main__':
     while True:
         main(url_data, generate_body(days_list))
+        time.sleep(0.75)

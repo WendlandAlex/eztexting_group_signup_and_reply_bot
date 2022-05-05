@@ -1,14 +1,16 @@
 import base64
 import datetime
+import os
 import requests
 import pprint
 import logging
 logging.basicConfig(level=logging.DEBUG)
 classes_logger = logging.getLogger(__name__)
-classes_logger.setLevel(logging.DEBUG)
+if os.getenv('DEBUG', None):
+    classes_logger.setLevel(logging.DEBUG)
+classes_logger.setLevel(logging.ERROR)
 
 from Services.oauth import generate_oauth_token_pair, refresh_oauth_token_pair, revoke_oauth_access_token, revoke_oauth_refresh_token
-
 
 class Client():
     # identify the core set of attributes needed for all API calls
@@ -100,14 +102,16 @@ class Client():
                     params=final_params
                 ).prepare()
 
-            classes_logger.debug({
-                    "_sent_by_class": type(self).__qualname__,
-                    "_called_with_args": locals(),
-                    "url": final_request.url,
-                    "method": final_request.method,
-                    "payload": final_request.body,
-                    "headers": final_request.headers
-                    })
+
+            if os.getenv('DEBUG', None):
+                classes_logger.debug({
+                        "_sent_by_class": type(self).__qualname__,
+                        "_called_with_args": locals(),
+                        "url": final_request.url,
+                        "method": final_request.method,
+                        "payload": final_request.body,
+                        "headers": final_request.headers
+                        })
 
             response = session.send(final_request)
 

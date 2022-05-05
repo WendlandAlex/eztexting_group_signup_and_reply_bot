@@ -13,7 +13,7 @@ class Contact(Client):
         self.email              = email
         self.firstName          = firstName
         self.lastName           = lastName
-        self.groupIdsAdd        = groupIdsAdd
+        self.groupIdsAdd        = groupIdsAdd # Is groupIdsAdd idempotent? Do we care about losing metadata like length of group membership if we always overwrite on update?
         self.groupIdsRemove     = groupIdsRemove
         self.note               = note
         self.custom1            = custom1
@@ -22,19 +22,17 @@ class Contact(Client):
         self.custom4            = custom4
         self.custom5            = custom5
 
-        if self.phoneNumber is not None:
-            try:
-                data = self.get()
-                if data is not None:
-                    for field, value in data.json().items():
-                        setattr(self, field, value)
+        if not os.getenv('DEBUG', None):
+            if self.phoneNumber is not None:
+                try:
+                    data = self.get()
+                    if data is not None:
+                        for field, value in data.json().items():
+                            setattr(self, field, value)
             
-            # TODO: find out return when contact doesn't exist yet 
-            except:
-                pass
-
-        if os.getenv('DEBUG', False):
-            print(self.__dict__)
+                # TODO: find out return when contact doesn't exist yet 
+                except:
+                    pass
 
     def __getattr__(self, attr, attr_if_attr_not_in_super=None):
         if attr in self._super_attrs:
@@ -92,9 +90,11 @@ class Folder(Client):
 
 
 class Group(Client):
-    def __init__(self, superclass):
+    def __init__(self, superclass, groupId=None, groupName=None):
         self._super = superclass
         self._super_attrs = self._super._attrs_for_subclass
+        self.groupId = groupId
+        self.groupName = groupName
 
     def __getattr__(self, attr, attr_if_attr_not_in_super=None):
         if attr in self._super_attrs:

@@ -1,12 +1,20 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+TYPE_CHECKING = True
 
 if TYPE_CHECKING:
     from Classes.Superclass import Client
     from Classes.Subclass import Contact
+    from Services.groups import get_groupIds_from_names
 
 import requests
 import json
+import os
+import logging
+logging.basicConfig(level=logging.DEBUG)
+_logger = logging.getLogger(__name__)
+_logger.setLevel(logging.DEBUG)
+
 
 def get_all_contacts(client: "Client", sorting=None, pagination=None):
     """
@@ -71,3 +79,22 @@ def create_or_update_batch_of_contacts(client: "Client", contacts: list=None):
     for i in contacts:
         return i.__dict__
     
+def modify_group_membership_of_contact(contact: "Contact", groupNames):
+    groupIds = get_groupIds_from_names(client=contact._super, groupNames=groupNames)
+    contact.groupIdsAdd = groupIds
+    _logger.info(f'added contact {contact.phoneNumber} to the following groups: {contact.groupIdsAdd}')
+    json_data = {"phoneNumber": contact.phoneNumber, "groupIds": contact.groupIdsAdd}
+
+    response = requests.Request(
+        method='POST',
+        url='https://eztexting_api_endpoint.com',
+        headers={'X-Authorization': 'Bearer oauthgoeshere'},
+        json=json_data
+    )
+
+    response = response.prepare()
+
+    if os.getenv('DEBUG', None):
+        return response
+
+    return True

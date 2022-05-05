@@ -1,8 +1,0 @@
-flask
-flask-rq # called as flask_rq
-asyncio
-flask[Async]
-requests
-python-dotenv # called as dotenv
-redis
-rq
