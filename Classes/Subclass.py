@@ -90,11 +90,18 @@ class Folder(Client):
 
 
 class Group(Client):
-    def __init__(self, superclass, groupId=None, groupName=None):
+    def __init__(self, superclass, id=None, name=None, note=None, phoneNumbers: list=None, strictValidation: bool=False, fetch=False):
         self._super = superclass
         self._super_attrs = self._super._attrs_for_subclass
-        self.groupId = groupId
-        self.groupName = groupName
+        self.url = self.base_url + '/contact-groups'
+        
+        self.id = id
+        self.name = name
+        self.note = note
+        self.phoneNumbers = phoneNumbers
+        self.strictValidation = strictValidation
+        if fetch:
+            self.get()
 
     def __getattr__(self, attr, attr_if_attr_not_in_super=None):
         if attr in self._super_attrs:
@@ -105,6 +112,65 @@ class Group(Client):
 
         # non-override version (for non-parent attributes)
         else: return self.__dict__.get(attr)
+
+    def create(self, groupIds_to_merge: list=None):
+        final_payload_dict = {'name': self.name}
+        if groupIds_to_merge: final_payload_dict['groupIds'] = groupIds_to_merge
+        for i in [self.note, self.phoneNumbers, self.strictValidation]:
+            if i is not None:
+                final_payload_dict.update(i)
+
+        return self.make_api_call(
+            url = self.url,
+            method = 'POST',
+            payload_dict=final_payload_dict
+        )
+
+    def get(self):
+        return self.make_api_call(
+            url = self.url + f'/{self.id}',
+            method = 'GET'
+        )
+
+    def update_name(self):
+        final_payload_dict = {'name': self.name}
+        if self.note:
+            final_payload_dict.update(self.note)
+
+        return self.make_api_call(
+            url = self.url + f'/{self.id}',
+            method = 'PUT',
+            payload_dict=final_payload_dict
+        )
+
+    def delete(self):
+        return self.make_api_call(
+            url = self.url + f'/{self.id}',
+            method = 'DELETE'
+        )
+
+    def add_contacts(self, phoneNumbers: list=None):
+        phoneNumbers_to_add = self.phoneNumbers
+        if phoneNumbers: 
+            phoneNumbers_to_add = list(set(self.phoneNumbers + phoneNumbers))
+        
+        final_params_list_of_tuples = [('phoneNumbers', i) for i in phoneNumbers_to_add]
+
+        return self.make_api_call(
+            url = self.url + f'/{self.id}',
+            method = 'POST',
+            params_dict=final_params_list_of_tuples
+        )
+
+    def delete_contacts(self, phoneNumbers: list=None):
+        phoneNumbers_to_delete = phoneNumbers
+        final_params_list_of_tuples = [('phoneNumbers', i) for i in phoneNumbers_to_delete]
+
+        return self.make_api_call(
+            url = self.url + f'/{self.id}',
+            method = 'DELETE',
+            params_dict=final_params_list_of_tuples
+        )
 
 
 class Inbox(Client):

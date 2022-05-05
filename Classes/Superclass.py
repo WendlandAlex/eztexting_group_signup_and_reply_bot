@@ -17,9 +17,10 @@ class Client():
     # subclasses of API class can inherit these by overriding __getattr__ to call the superclass's attributes
     _attrs_for_subclass = ['companyName', 'base_url', 'headers', 'payload', 'accessToken', 'refreshToken']
 
-    def __init__(self, username=None, password=None, companyName=None, base_url=None, payload={}, headers={}):
+    def __init__(self, username=None, password=None, companyName=None, base_url=None, payload={}, headers={}, params=[]):
         self.payload = payload
         self.headers = headers
+        self.params = params
         self.username = username
         self.password = password
         self.companyName = companyName
@@ -66,10 +67,10 @@ class Client():
 
         return self
 
-    def make_api_call(self, method, url, headers_dict: dict=None, payload_dict: dict=None, params_dict: dict=None, auth_method='oauth'):
+    def make_api_call(self, method, url, headers_dict: dict=None, payload_dict: dict=None, params_list_of_tuples: list=None, auth_method='oauth'):
         final_headers = self.headers.copy()
         final_payload = self.payload.copy()
-        final_params  = {}.copy()
+        final_params  = self.params.copy()
 
         if auth_method == 'oauth':
             auth_header = {'Authorization': f'Bearer {self.accessToken}'}
@@ -90,8 +91,12 @@ class Client():
                 if payload_dict_iterator is not None:
                     final_payload.update(payload_dict_iterator)
 
-            if params_dict is not None:
-                final_params.update(params_dict) # reserved for future modifications if we need them
+            # python requests may accept a dict of params
+            # but this prevents duplicate values for same key
+            # contact-group update requires a querystring of '?phoneNumbers=1&phoneNumbers=2'
+            for params_list_of_tuples_iterator in [self.params, params_list_of_tuples]:
+                if params_list_of_tuples_iterator is not None:
+                    final_params.append(params_list_of_tuples_iterator)
 
             session = requests.Session()
             final_request =  requests.Request(
