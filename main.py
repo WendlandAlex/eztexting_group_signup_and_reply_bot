@@ -4,6 +4,8 @@ from flask import Flask, abort, request, Response
 import dotenv
 import os
 import json
+import logging
+logging.getLogger('asyncio').setLevel(logging.WARNING)
 
 
 TYPE_CHECKING = True
@@ -13,8 +15,8 @@ if TYPE_CHECKING:
     from Services.contacts              import get_all_contacts, get_filtered_contacts, create_or_update_batch_of_contacts, modify_group_membership_of_contact
     from Services.groups                import get_groupIds_from_names
     from Services.messages              import regex_parse_message_body, send_message, receive_inbox_message_reply, receive_pointer_to_inbox_message, schedule_message
-    from Handlers.inbox_message_replies import send_confirmation
-    from Handlers.keyword_replies       import *
+    from Handlers.inbound_text_received import send_confirmation
+    from Handlers.keyword_opt_in        import *
     from Handlers.admin_commands        import *
     from Handlers.validators            import validate_hash_from_header
 
@@ -62,11 +64,11 @@ async def dispatch_task(fromNumber=None, message=None):
 # setup flask webhook handler #
 app = Flask(__name__)
 
-@app.route('/inbound_sms_received', methods=['POST'])
+@app.route('/inbound_text_received', methods=['POST'])
 async def handle_sms():
     try:
         message_type = request.json.get('type', None)
-        print(message_type)
+
         if message_type != 'inbound_text.received':
             abort(404)
     except Exception as e:

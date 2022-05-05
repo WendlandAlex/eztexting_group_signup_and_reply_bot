@@ -52,7 +52,7 @@ def generate_header_sig(body):
 
 def main(url, data):
     response = requests.post(
-        url=url+'/inbound_sms_received',
+        url=url+'/inbound_text_received',
         headers=generate_header_sig(data),
         json=data
     )
@@ -63,4 +63,4 @@ def main(url, data):
 if __name__ == '__main__':
     while True:
         main(url_data, generate_body(days_list))
-        time.sleep(0.75)
+        # time.sleep(0.75)

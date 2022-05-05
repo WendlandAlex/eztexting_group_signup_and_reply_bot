@@ -13,8 +13,9 @@ import os
 import logging
 logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)
-_logger.setLevel(logging.DEBUG)
-
+if os.getenv('DEBUG', False):
+    _logger.setLevel(logging.DEBUG)
+_logger.setLevel(logging.INFO)
 
 def get_all_contacts(client: "Client", sorting=None, pagination=None):
     """
@@ -82,7 +83,7 @@ def create_or_update_batch_of_contacts(client: "Client", contacts: list=None):
 def modify_group_membership_of_contact(contact: "Contact", groupNames):
     groupIds = get_groupIds_from_names(client=contact._super, groupNames=groupNames)
     contact.groupIdsAdd = groupIds
-    _logger.info(f'added contact {contact.phoneNumber} to the following groups: {contact.groupIdsAdd}')
+    _logger.info(f'\n\nadded contact {contact.phoneNumber} to the following groups: {contact.groupIdsAdd}\n')
     json_data = {"phoneNumber": contact.phoneNumber, "groupIds": contact.groupIdsAdd}
 
     response = requests.Request(
