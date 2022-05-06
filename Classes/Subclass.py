@@ -1,3 +1,4 @@
+from datetime import datetime
 from Classes.Superclass import Client
 import os
 
@@ -92,7 +93,7 @@ class Folder(Client):
 class Group(Client):
     def __init__(self, superclass, id=None, name=None, note=None, phoneNumbers: list=None, strictValidation: bool=False, fetch=False):
         self._super = superclass
-        self._super_attrs = self._super._attrs_for_subclass
+        self._super_attrs = self._attrs_for_subclass
         self.url = self.base_url + '/contact-groups'
         
         self.id = id
@@ -176,7 +177,7 @@ class Group(Client):
 class Inbox(Client):
     def __init__(self, superclass):
         self._super = superclass
-        self._super_attrs = self._super._attrs_for_subclass
+        self._super_attrs = self._attrs_for_subclass
 
     def __getattr__(self, attr, attr_if_attr_not_in_super=None):
         if attr in self._super_attrs:
@@ -192,7 +193,7 @@ class Inbox(Client):
 class Keyword(Client):
     def __init__(self, superclass):
         self._super = superclass
-        self._super_attrs = self._super._attrs_for_subclass
+        self._super_attrs = self._attrs_for_subclass
     
     def __getattr__(self, attr, attr_if_attr_not_in_super=None):
         if attr in self._super_attrs:
@@ -208,7 +209,7 @@ class Keyword(Client):
 class MediaFile(Client):
     def __init__(self, superclass):
         self._super = superclass
-        self._super_attrs = self._super._attrs_for_subclass
+        self._super_attrs = self._attrs_for_subclass
 
     def __getattr__(self, attr, attr_if_attr_not_in_super=None):
         if attr in self._super_attrs:
@@ -242,7 +243,7 @@ class Message(Client):
         self.mediaUrl           = mediaUrl
         self.message            = message
         self.messageTemplateId  = messageTemplateId
-        self.sendAt             = sendAt
+        self.sendAt             = self._strftime(sendAt)
         self.strictValidation   = strictValidation # if one number in the list is invalid, no messages will be sent (including to valid numbers)
         self.toNumbers          = toNumbers
 
@@ -258,6 +259,12 @@ class Message(Client):
 
         # non-override version (for non-parent attributes)
         else: return self.__dict__.get(attr)
+
+    def _strftime(sendAt: datetime):
+        if isinstance(sendAt, datetime):
+            return sendAt.isoformat()
+        else:
+            return sendAt
 
     def _finalize_payload(self):
         final_payload_dict = {}

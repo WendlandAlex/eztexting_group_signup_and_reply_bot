@@ -13,8 +13,7 @@ if TYPE_CHECKING:
     from Classes.Superclass             import Client
     from Classes.Subclass               import Contact, Folder, Group, Inbox, Keyword, MediaFile, Message
     from Services.contacts              import get_all_contacts, get_filtered_contacts, create_or_update_batch_of_contacts, modify_group_membership_of_contact
-    from Services.groups                import get_groupIds_from_names
-    from Services.messages              import regex_parse_message_body, send_message, receive_inbox_message_reply, receive_pointer_to_inbox_message, schedule_message
+    from Services.messages              import regex_parse_message_body
     from Handlers.inbound_text_received import send_confirmation
     from Handlers.keyword_opt_in        import *
     from Handlers.admin_commands        import *

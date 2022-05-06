@@ -18,23 +18,6 @@ def _strftime_unix(timestamp: datetime.datetime):
     timetuple = timestamp.replace(tzinfo=datetime.timezone.utc).timetuple()
     return time.mktime(timetuple)
 
-def send_message(message_client: "Client"):
-    pass
-
-def receive_inbox_message_reply(message: "Message", phone_number, message_body):
-    message_body = urllib.parse.unquote(message_body)
-
-
-def receive_pointer_to_inbox_message():
-    pass
-
-def schedule_message(message_client: "Client", datetime_object: datetime.datetime):
-    sender = Message(message_client,
-        StampToSend= _strftime_unix(datetime_object)
-    )
-
-    return sender.send()
-
 def regex_parse_message_body(message: str, fromNumber: str=None, id: str=None, queue=False):
     groupNames = []
     days_of_week_regex_pattern = re.compile('(mon|tues|wednes|thurs|fri|satur|sun)day', re.IGNORECASE)
