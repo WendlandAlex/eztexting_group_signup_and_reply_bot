@@ -17,7 +17,7 @@ class Client():
     # subclasses of API class can inherit these by overriding __getattr__ to call the superclass's attributes
     _attrs_for_subclass = ['companyName', 'base_url', 'headers', 'payload', 'accessToken', 'refreshToken']
 
-    def __init__(self, username=None, password=None, companyName=None, base_url=None, payload={}, headers={}, params=None):
+    def __init__(self, username=None, password=None, companyName=None, base_url=None, oauth_token_server_url=None, oauth_token_server_shared_secret=None, payload={}, headers={}, params=None):
         self.payload = payload
         self.headers = headers
         self.params = [(None, None)].append(params)
@@ -25,6 +25,8 @@ class Client():
         self.password = password
         self.companyName = companyName
         self.base_url = base_url
+        self.oauth_token_server_url = oauth_token_server_url
+        self.oauth_token_server_shared_secret = oauth_token_server_shared_secret
         self._generate_or_refresh_oauth_token_pair()
         self._update_payload(**{"companyName": self.companyName})
         self._update_headers(**{"Accept": "*/*", "Content-Type": "application/json"})

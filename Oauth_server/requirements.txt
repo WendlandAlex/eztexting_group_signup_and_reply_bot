@@ -1,0 +1,6 @@
+flask
+flask-caching
+asyncio
+flask[Async]
+requests
+python-dotenv # called as dotenv

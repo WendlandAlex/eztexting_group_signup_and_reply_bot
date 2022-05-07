@@ -21,18 +21,20 @@ if TYPE_CHECKING:
 
 dotenv.load_dotenv()
 
-eztexting_username              = os.getenv('EZTEXTING_USERNAME')
-eztexting_password              = os.getenv('EZTEXTING_PASSWORD')
-eztexting_companyName           = os.getenv('COMPANY_NAME', 'test company')
-eztexting_creditcard_number     = os.getenv('EZTEXTING_CREDITCARD', None)
-eztexting_admin_phone_number    = os.getenv('EZTEXTING_ADMIN_PHONE_NUMBER', None)
-inbound_phone_number            = os.getenv('INBOUND_PHONE_NUMBER', None)
-base_url                        = os.getenv('BASE_URL', 'https://a.eztexting.com/v1')
-webhook_secret_key              = os.getenv('WEBHOOK_SECRET_KEY', None)
-webhook_url                     = os.getenv('WEBHOOK_URL', None)
-DEBUG                           = os.getenv('DEBUG', False)
+eztexting_username                  = os.getenv('EZTEXTING_USERNAME')
+eztexting_password                  = os.getenv('EZTEXTING_PASSWORD')
+eztexting_companyName               = os.getenv('COMPANY_NAME', 'test company')
+eztexting_creditcard_number         = os.getenv('EZTEXTING_CREDITCARD', None)
+eztexting_admin_phone_number        = os.getenv('EZTEXTING_ADMIN_PHONE_NUMBER', None)
+inbound_phone_number                = os.getenv('INBOUND_PHONE_NUMBER', None)
+base_url                            = os.getenv('BASE_URL', 'https://a.eztexting.com/v1')
+webhook_secret_key                  = os.getenv('WEBHOOK_SECRET_KEY', None)
+webhook_url                         = os.getenv('WEBHOOK_URL', None)
+oauth_token_server_url              = os.getenv('OAUTH_TOKEN_SERVER_URL', 'http://127.0.0.1:8888/generate_token')
+oauth_token_server_shared_secret    = os.getenv('OAUTH_TOKEN_SERVER_SHARED_SECRET', None)
+DEBUG                               = os.getenv('DEBUG', False)
 
-eztexting_client                = Client(eztexting_username, eztexting_password, eztexting_companyName, base_url)
+eztexting_client            = Client(eztexting_username, eztexting_password, eztexting_companyName, base_url, oauth_token_server_url=oauth_token_server_url)
 
 def main():
     # print(

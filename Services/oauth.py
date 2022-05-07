@@ -7,23 +7,18 @@
 
 import datetime
 import os
-from logging import Logger
+import requests
 
 def generate_oauth_token_pair(token_client: "Client"):
-    response = token_client.make_api_call(
-        method='POST',
-        url=f'{token_client.base_url}/tokens/create',
-        headers_dict=token_client.headers,
-        payload_dict={'appKey': token_client.username, 'appSecret': token_client.password},
-        auth_method=None
-        ).json()
+    response = requests.request(
+        method='GET',
+        url=token_client.oauth_token_server_url,
+        headers={'Shared-Secret': token_client.oauth_token_server_shared_secret}
+    )
 
-    if os.getenv('DEBUG', False):
-        response = {'accessToken': 'mytoken', 'refreshToken': 'mytoken', 'expiresInSeconds': '5400'}
-
-    accessToken = response.get('accessToken')
-    refreshToken = response.get('refreshToken')
-    expiration_datetime = datetime.datetime.now() + datetime.timedelta(seconds=int(response.get('expiresInSeconds')))
+    accessToken = response.json().get('accessToken')
+    refreshToken = response.json().get('refreshToken')
+    expiration_datetime = datetime.datetime.fromisoformat(response.json().get('expires_at_isoformat'))
 
     return accessToken, refreshToken, expiration_datetime
 
