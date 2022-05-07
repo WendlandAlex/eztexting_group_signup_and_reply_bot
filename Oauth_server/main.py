@@ -8,6 +8,7 @@ import dotenv
 import os
 import logging
 logging.getLogger('asyncio').setLevel(logging.WARNING)
+logging.getLogger('urllib3').setLevel(logging.WARNING)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 

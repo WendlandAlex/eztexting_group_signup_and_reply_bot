@@ -44,7 +44,7 @@ def main():
     #     eztexting_client
     # )
     print(
-        Contact(eztexting_client, phoneNumber=eztexting_admin_phone_number, custom1="my super cool custom1").create_or_update()
+        Contact(eztexting_client, phoneNumber=eztexting_admin_phone_number)
     )
 
 async def dispatch_task(fromNumber=None, message=None):
