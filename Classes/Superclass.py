@@ -31,6 +31,11 @@ class Client():
         self._update_payload(**{"companyName": self.companyName})
         self._update_headers(**{"Accept": "*/*", "Content-Type": "application/json"})
 
+        if os.getenv('DEBUG', False):
+            print(
+                {'accessToken': self.accessToken, 'refreshToken': self.refreshToken, 'expiration_datetime': self.expiration_datetime}
+            )
+
     def __str__(self):
         return pprint.pformat(self.__dict__)
 

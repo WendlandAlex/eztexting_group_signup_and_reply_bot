@@ -47,7 +47,6 @@ with app.app_context():
                     token.accessToken = 'asdfo23109fd'
                     token.refreshToken = '1309jsa[knd'
                     token.expires_at_isoformat = (datetime.now() + timedelta(seconds=5400)).isoformat()
-                    pass
                 else:
                     raise
 
@@ -55,7 +54,7 @@ with app.app_context():
             cache.set('refreshToken', token.refreshToken)
             cache.set('expires_at_isoformat', token.expires_at_isoformat)
 
-            time.sleep(1000)
+            time.sleep(300)
 
     @app.route('/generate_token', methods=['GET'])
     async def main():

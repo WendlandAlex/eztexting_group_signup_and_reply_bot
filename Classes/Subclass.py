@@ -92,17 +92,20 @@ class Folder(Client):
 
 class Group(Client):
     def __init__(self, superclass, id=None, name=None, note=None, phoneNumbers: list=None, strictValidation: bool=False, fetch=False):
-        self._super = superclass
-        self._super_attrs = self._attrs_for_subclass
-        self.url = self.base_url + '/contact-groups'
+        self._super             = superclass
+        self._super_attrs       = self._attrs_for_subclass
+        self.url                = self.base_url + '/contact-groups'
         
-        self.id = id
-        self.name = name
-        self.note = note
-        self.phoneNumbers = phoneNumbers
-        self.strictValidation = strictValidation
+        self.id                 = id
+        self.name               = name
+        self.note               = note
+        self.phoneNumbers       = phoneNumbers
+        self.strictValidation   = strictValidation
         if fetch:
-            self.get()
+                data = self.get()
+                if data is not None:
+                    for field, value in data.json().items():
+                        setattr(self, field, value)
 
     def __getattr__(self, attr, attr_if_attr_not_in_super=None):
         if attr in self._super_attrs:
