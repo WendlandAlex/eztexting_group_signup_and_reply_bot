@@ -4,3 +4,4 @@ asyncio
 flask[Async]
 requests
 python-dotenv # called as dotenv
+dnspython

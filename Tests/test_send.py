@@ -1,9 +1,11 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-TYPE_CHECKING = True
 
+from oauth_server.app import LOCAL_ONLY
+
+TYPE_CHECKING = True
 if TYPE_CHECKING:
-    from Handlers.validators import create_hmacSHA1_hash
+    from webhook_server.Handlers.validators import create_hmacSHA1_hash
 
 import os
 import dotenv
@@ -14,8 +16,11 @@ import random
 
 
 dotenv.load_dotenv()
-url_data = os.getenv('WEBHOOK_URL')
-signing_key = os.getenv('WEBHOOK_SECRET_KEY')
+url_data = os.getenv('WEBHOOK_SERVER_URL', None)
+signing_key = os.getenv('WEBHOOK_SERVER_SECRET_KEY')
+LOCAL_ONLY = os.getenv('LOCAL_ONLY', None)
+if LOCAL_ONLY == True:
+    url_data = 'http://localhost:8080'
 
 days_list = [
         'Monday by the way I have a long message... (1/99)',
@@ -46,9 +51,12 @@ def generate_body(inputs_list):
     }
 
 def generate_header_sig(body):
-    return {
+    a = {
         "X-Signature": base64.b64encode(create_hmacSHA1_hash(body, signing_key=signing_key).digest()).decode()
         }
+
+    print(a)
+    return a
 
 def main(url, data):
     response = requests.post(

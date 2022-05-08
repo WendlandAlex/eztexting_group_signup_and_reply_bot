@@ -17,7 +17,7 @@ class Client():
     # subclasses of API class can inherit these by overriding __getattr__ to call the superclass's attributes
     _attrs_for_subclass = ['companyName', 'base_url', 'headers', 'payload', 'accessToken', 'refreshToken']
 
-    def __init__(self, username=None, password=None, companyName=None, base_url=None, oauth_token_server_url=None, oauth_token_server_shared_secret=None, payload={}, headers={}, params=None):
+    def __init__(self, username=None, password=None, companyName=None, base_url=None, oauth_token_server_url=None, oauth_token_server_port=None, oauth_token_server_shared_secret=None, payload={}, headers={}, params=None):
         self.payload = payload
         self.headers = headers
         self.params = [(None, None)].append(params)
@@ -26,6 +26,7 @@ class Client():
         self.companyName = companyName
         self.base_url = base_url
         self.oauth_token_server_url = oauth_token_server_url
+        self.oauth_token_server_port = oauth_token_server_port
         self.oauth_token_server_shared_secret = oauth_token_server_shared_secret
         self._generate_or_refresh_oauth_token_pair()
         self._update_payload(**{"companyName": self.companyName})
@@ -80,6 +81,8 @@ class Client():
         final_params  = self.params
 
         if auth_method == 'oauth':
+            if self.expiration_datetime < datetime.datetime.now() + datetime.timedelta(seconds=10):
+                self._generate_or_refresh_oauth_token_pair()
             auth_header = {'Authorization': f'Bearer {self.accessToken}'}
 
         elif auth_method == 'http_basic':
@@ -113,6 +116,8 @@ class Client():
                     json=final_payload,
                     params=final_params
                 ).prepare()
+
+            print(final_request.headers)
 
 
             if os.getenv('DEBUG', None):

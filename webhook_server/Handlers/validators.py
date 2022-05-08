@@ -27,18 +27,25 @@ def validate_hash_from_header(header, body, signing_key: str):
     return False
 
 def create_hmacSHA1_hash(input, signing_key):
-    if type(signing_key) is bytes:
-        bytes_key = signing_key
-    elif type(signing_key) is str:
-        bytes_key = signing_key.encode('utf-8')
-    if type(input) is dict:
-        bytes_body = json.dumps(input).encode('utf-8')
-    elif type(input) is str:
-        bytes_body = input.encode('utf-8')
-    elif type(input) is bytes:
-        bytes_body = input
+    if signing_key:
+        if type(signing_key) is bytes:
+            bytes_key = signing_key
+        elif type(signing_key) is str:
+            bytes_key = signing_key.encode('utf-8')
     else:
-        raise TypeError
+        raise
+    
+    if input:
+        if type(input) is dict:
+            bytes_body = json.dumps(input).encode('utf-8')
+        elif type(input) is str:
+            bytes_body = input.encode('utf-8')
+        elif type(input) is bytes:
+            bytes_body = input
+        else:
+            raise TypeError
+    else:
+        raise
 
     return hmac.new(key=bytes_key, msg=bytes_body, digestmod=hashlib.sha1)
     

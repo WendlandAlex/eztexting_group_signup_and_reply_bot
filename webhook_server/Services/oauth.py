@@ -10,9 +10,12 @@ import os
 import requests
 
 def generate_oauth_token_pair(token_client: "Client"):
+    url = f'{token_client.oauth_token_server_url}'
+    if token_client.oauth_token_server_port: url = f'{url}:{token_client.oauth_token_server_port}'
+
     response = requests.request(
         method='GET',
-        url=f'{token_client.oauth_token_server_url}/generate_token',
+        url=f'{url}/generate_token',
         headers={'Shared-Secret': token_client.oauth_token_server_shared_secret}
     )
 
