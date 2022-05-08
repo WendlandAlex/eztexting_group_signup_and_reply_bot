@@ -12,7 +12,7 @@ The oauth server continuously presents a fresh token over an http interface at t
 
 # webhook_server
 ## Deployment instructions
-cd into `/.webhook_server`. Run `setup.py`. This will load any available environment variables in .env, then confirm if they are accurate. Any required variables not provided, or any innacurate variables, will be written.
+cd into `./webhook_server`. Run `setup.py`. This will load any available environment variables in .env, then confirm if they are accurate. Any required variables not provided, or any innacurate variables, will be written.
 
 run `fly launch`. Do accept the existing `fly.toml` if prompted. DO NOT overwrite Dockerfile if prompted. 
 ```
