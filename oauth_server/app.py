@@ -19,7 +19,7 @@ eztexting_username                  = os.getenv('EZTEXTING_USERNAME')
 eztexting_password                  = os.getenv('EZTEXTING_PASSWORD')
 eztexting_url                       = os.getenv('EZTEXTING_URL', 'https://a.eztexting.com/v1')
 oauth_token_server_shared_secret    = os.getenv('OAUTH_TOKEN_SERVER_SHARED_SECRET', None)
-oauth_token_server_port             = os.getenv('OAUTH_TOKEN_SERVER_PORT', '80')
+oauth_token_server_port             = os.getenv('OAUTH_TOKEN_SERVER_PORT', '8080')
 LOCAL_ONLY                          = os.getenv('LOCAL_ONLY', False)
 if LOCAL_ONLY == True:
     oauth_token_server_port = '8888'

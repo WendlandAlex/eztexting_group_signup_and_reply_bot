@@ -19,7 +19,7 @@ COPY . .
 
 ENV PYTHONPATH "${PYTHONPATH}:/app"
 ENV FLASK_APP "app.py"
-EXPOSE 80
+EXPOSE 8080
 
 # replace APP_NAME with module name
-CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0", "--port=80"]
+CMD ["python3", "-m", "flask", "run", "--host=::", "--port=8080"]

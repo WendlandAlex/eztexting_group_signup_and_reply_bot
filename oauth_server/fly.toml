@@ -10,12 +10,12 @@ processes = []
   PORT = "8080"
 
 [experimental]
-  allowed_public_ports = []
+  private_network = true
   auto_rollback = true
 
 [[services]]
   http_checks = []
-  internal_port = 80
+  internal_port = 8080 # NOTE: connections to the *.internal IP need to be made to this internal port
   processes = ["app"]
   protocol = "tcp"
   script_checks = []
