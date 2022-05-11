@@ -1,15 +1,15 @@
-# from __future__ import annotations
-# from typing import TYPE_CHECKING
-# TYPE_CHECKING = True
+from __future__ import annotations
+from typing import TYPE_CHECKING
+TYPE_CHECKING = True
 
-# if TYPE_CHECKING:
-#     from Classes.Superclass import Client
+if TYPE_CHECKING:
+    import Classes
 
 import datetime
 import os
 import requests
 
-def generate_oauth_token_pair(token_client: "Client"):
+def generate_oauth_token_pair(token_client: "Classes.Superclass.Client"):
     url = f'{token_client.oauth_token_server_url}'
     if token_client.oauth_token_server_port: url = f'{url}:{token_client.oauth_token_server_port}'
 
@@ -25,7 +25,7 @@ def generate_oauth_token_pair(token_client: "Client"):
 
     return accessToken, refreshToken, expiration_datetime
 
-def refresh_oauth_token_pair(token_client: "Client"):
+def refresh_oauth_token_pair(token_client: "Classes.Superclass.Client"):
     response = token_client.make_api_call(
         method='POST',
         url=f'{token_client.base_url}/tokens/refresh',
@@ -39,7 +39,7 @@ def refresh_oauth_token_pair(token_client: "Client"):
 
     return accessToken, refreshToken, expiration_datetime
 
-def revoke_oauth_access_token(token_client: "Client"):
+def revoke_oauth_access_token(token_client: "Classes.Superclass.Client"):
     response = token_client.make_api_call(
         method='POST',
         url=f'{token_client.base_url}/tokens/revoke',
@@ -50,7 +50,7 @@ def revoke_oauth_access_token(token_client: "Client"):
     if response.ok:
         return True
 
-def revoke_oauth_refresh_token(token_client: "Client"):
+def revoke_oauth_refresh_token(token_client: "Classes.Superclass.Client"):
     response = token_client.make_api_call(
         method='POST',
         url=f'{token_client.base_url}/tokens/revoke',

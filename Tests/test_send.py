@@ -1,8 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from oauth_server.app import LOCAL_ONLY
-
 TYPE_CHECKING = True
 if TYPE_CHECKING:
     from webhook_server.Handlers.validators import create_hmacSHA1_hash
@@ -13,6 +11,8 @@ import requests
 import time
 import base64
 import random
+import logging
+logging.getLogger('urllib3').setLevel(logging.WARNING)
 
 
 dotenv.load_dotenv()
@@ -45,6 +45,7 @@ def generate_body(inputs_list):
     "fromNumber":"14243798239",
     "toNumber":"14243798231",
     "message":f"I want to sign up for {inputs_list[i]}",
+    # 'message': 'testmessage',
     "received":"2020-03-06T10:31:18.724Z",
     "optIn": False,
     "optOut": False
@@ -55,17 +56,16 @@ def generate_header_sig(body):
         "X-Signature": base64.b64encode(create_hmacSHA1_hash(body, signing_key=signing_key).digest()).decode()
         }
 
-    print(a)
     return a
 
 def main(url, data):
-    response = requests.post(
+    response = requests.request(
+        method='POST',
         url=url+'/inbound_text_received',
         headers=generate_header_sig(data),
         json=data
     )
 
-    # print(response.headers, response.json())
     print(response.status_code, response.json().get('message'))
 
 if __name__ == '__main__':

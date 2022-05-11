@@ -39,7 +39,7 @@ with app.app_context():
     webhook_server_secret_key           = os.getenv('WEBHOOK_SERVER_SECRET_KEY', None)
     webhook_server_url                  = os.getenv('WEBHOOK_SERVER_URL', None)
     oauth_token_server_url              = os.getenv('OAUTH_TOKEN_SERVER_URL', 'http://127.0.0.1')
-    oauth_token_server_port             = os.getenv('OAUTH_TOKEN_SERVER_PORT', None)
+    oauth_token_server_port             = os.getenv('OAUTH_TOKEN_SERVER_PORT', '8080')
     oauth_token_server_shared_secret    = os.getenv('OAUTH_TOKEN_SERVER_SHARED_SECRET', None)
     DEBUG                               = os.getenv('DEBUG', None)
     LOCAL_ONLY                          = os.getenv('LOCAL_ONLY', None)
@@ -47,17 +47,6 @@ with app.app_context():
         webhook_server_url = 'http://localhost:8080'
         oauth_token_server_url = 'http://localhost'
         oauth_token_server_port = '8888'
-
-    if DEBUG:
-        oauth_token_server_ip = dns.resolver.resolve(oauth_token_server_url.replace('http://', '').replace('https://', ''), 'AAAA')[0].to_text()
-        print(f'AAAA for {oauth_token_server_url} : {oauth_token_server_ip}')
-
-        try:
-            res = requests.get(url=f'https://{oauth_token_server_ip}/generate_token', headers={"host": "eztexting-oauth-server.internal", "Shared-Secret": oauth_token_server_shared_secret})
-            print(res)
-        except Exception as e:
-            print(e)
-
 
     eztexting_client = Client(eztexting_username, eztexting_password, eztexting_companyName, base_url, oauth_token_server_url=oauth_token_server_url, oauth_token_server_port=oauth_token_server_port, oauth_token_server_shared_secret=oauth_token_server_shared_secret)
 
@@ -98,7 +87,7 @@ with app.app_context():
             if message_type != 'inbound_text.received':
                 abort(404)
         except Exception as e:
-            print(e)
+            print(str(e))
             abort(400)
 
         if not validate_hash_from_header(request.headers.get('X-Signature'), request.json, webhook_server_secret_key):

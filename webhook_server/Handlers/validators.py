@@ -20,7 +20,7 @@ def validate_hash_from_header(header, body, signing_key: str):
     # compare this hash to hash sent by the remote host in the
     # 'X-Signature' header to prove they have the shared secret
     hashed_body_string = base64.b64encode(hashed_body_bytes.digest()).decode()
-    
+
     if header == hashed_body_string:
         return True
 

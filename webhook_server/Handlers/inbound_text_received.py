@@ -12,8 +12,6 @@ import requests
 import os
 import json
 
-from task_queue import out_queue
-
 def send_confirmation(contact: "Contact", groupNames: list, queue=False):
     capitalized_groups = [i.capitalize() for i in groupNames]
     if len(capitalized_groups) > 1:
