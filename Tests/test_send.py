@@ -14,6 +14,10 @@ import random
 import logging
 logging.getLogger('urllib3').setLevel(logging.WARNING)
 
+# reliably allow import from sibling modules
+import sys
+import pathlib
+sys.path += [pathlib.Path(os.getcwd()).parent]
 
 dotenv.load_dotenv()
 url_data = os.getenv('WEBHOOK_SERVER_URL', None)
