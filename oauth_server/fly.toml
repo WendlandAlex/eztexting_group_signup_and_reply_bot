@@ -20,19 +20,22 @@ processes = []
   protocol = "tcp"
   script_checks = []
 
-  [services.concurrency]
-    hard_limit = 25
-    soft_limit = 20
-    type = "connections"
+# To enable internal-only networking
+# Do not define any proxy ports -- a routable ipv6 will exist but not accept connections
+# connect to the internal service over HTTP (unless you want to set up TLS termination on the app)
+#  [services.concurrency]
+#    hard_limit = 25
+#    soft_limit = 20
+#    type = "connections"
 
-  [[services.ports]]
-    force_https = true
-    handlers = ["http"]
-    port = 80
+#  [[services.ports]]
+#    force_https = true
+#    handlers = ["http"]
+#    port = 80
 
-  [[services.ports]]
-    handlers = ["tls", "http"]
-    port = 443
+#  [[services.ports]]
+#    handlers = ["tls", "http"]
+#    port = 443
 
   [[services.tcp_checks]]
     grace_period = "1s"
