@@ -33,7 +33,6 @@ def test_signup_multiple_valid():
     response = send_sms(url_data, test_data, signing_key)
     assert response.ok and response.json().get('message').lower().find('wednesday, friday')
 
-
 def test_signup_invalid():
     test_data = base_data.copy()
     test_data['message'] = 'there are no weekday names in this message'
